@@ -113,17 +113,30 @@ class TestClientsRoute:
         assert r.status_code == 400
 
     def test_add_client_no_body(self, client):
-        r = client.post("/clients", data="not json",
-                        content_type="application/json")
+        r = client.post(
+            "/clients",
+            data="not json",
+            content_type="application/json"
+        )
         assert r.status_code == 400
 
     def test_add_client_unknown_program(self, client):
-        r = client.post("/clients", json={"name": "X", "program": "Ghost Program"})
+        r = client.post(
+            "/clients",
+            json={"name": "X", "program": "Ghost Program"}
+        )
         assert r.status_code == 400
 
     def test_get_existing_client(self, client):
-        client.post("/clients", json={"name": "Priya", "weight": 60,
-                                       "height": 160, "program": "Beginner (BG)"})
+        client.post(
+            "/clients",
+            json={
+                "name": "Priya",
+                "weight": 60,
+                "height": 160,
+                "program": "Beginner (BG)"
+            }
+        )
         r = client.get("/clients/Priya")
         assert r.status_code == 200
         assert r.get_json()["client"]["name"] == "Priya"
@@ -133,8 +146,14 @@ class TestClientsRoute:
         assert r.status_code == 404
 
     def test_delete_client(self, client):
-        client.post("/clients", json={"name": "Ravi", "weight": 80,
-                                       "program": "Fat Loss (FL) - 3 day"})
+        client.post(
+            "/clients",
+            json={
+                "name": "Ravi",
+                "weight": 80,
+                "program": "Fat Loss (FL) - 3 day"
+            }
+        )
         r = client.delete("/clients/Ravi")
         assert r.status_code == 200
         assert client.get("/clients/Ravi").status_code == 404
@@ -144,8 +163,15 @@ class TestClientsRoute:
         assert r.status_code == 404
 
     def test_bmi_included_in_client(self, client):
-        client.post("/clients", json={"name": "Meena", "weight": 65,
-                                       "height": 165, "program": "Beginner (BG)"})
+        client.post(
+            "/clients",
+            json={
+                "name": "Meena",
+                "weight": 65,
+                "height": 165,
+                "program": "Beginner (BG)"
+            }
+        )
         data = client.get("/clients/Meena").get_json()
         assert data["client"]["bmi"] is not None
         assert "category" in data["client"]["bmi"]
