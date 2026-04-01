@@ -22,8 +22,11 @@ pipeline {
 
         stage('Build Environment') {
             steps {
-                echo '── Installing Python dependencies ──'
+                echo '── Installing Python + Docker dependencies ──'
                 sh '''
+                    apt update
+                    apt install -y docker.io
+
                     python -m pip install --upgrade pip
                     pip install -r requirements.txt
                     pip install flake8 pytest pytest-cov
