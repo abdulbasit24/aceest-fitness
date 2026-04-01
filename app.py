@@ -6,10 +6,10 @@ app = Flask(__name__)
 clients = {}
 
 PROGRAMS = {
-    "Fat Loss (FL) - 3 day":  {"factor": 22, "desc": "3-day full-body fat loss"},
-    "Fat Loss (FL) - 5 day":  {"factor": 24, "desc": "5-day split, higher volume fat loss"},
+    "Fat Loss (FL) - 3 day": {"factor": 22, "desc": "3-day full-body fat loss"},
+    "Fat Loss (FL) - 5 day": {"factor": 24, "desc": "5-day split, higher volume fat loss"},
     "Muscle Gain (MG) - PPL": {"factor": 35, "desc": "Push/Pull/Legs hypertrophy"},
-    "Beginner (BG)":          {"factor": 26, "desc": "3-day simple beginner full-body"},
+    "Beginner (BG)": {"factor": 26, "desc": "3-day simple beginner full-body"},
 }
 
 
@@ -69,21 +69,21 @@ def add_client():
     if program and program not in PROGRAMS:
         return jsonify({"error": f"Unknown program: {program}"}), 400
 
-    weight  = float(data.get("weight", 0))
-    height  = float(data.get("height", 0))
-    age     = int(data.get("age", 0))
+    weight = float(data.get("weight", 0))
+    height = float(data.get("height", 0))
+    age = int(data.get("age", 0))
 
     calories = calculate_calories(weight, program)
     bmi_info = calculate_bmi(weight, height)
 
     client = {
-        "name":     name,
-        "age":      age,
-        "weight":   weight,
-        "height":   height,
-        "program":  program,
+        "name": name,
+        "age": age,
+        "weight": weight,
+        "height": height,
+        "program": program,
         "calories": calories,
-        "bmi":      bmi_info,
+        "bmi": bmi_info,
     }
     clients[name] = client
     return jsonify({"message": "Client saved", "client": client}), 201
@@ -107,7 +107,7 @@ def delete_client(name):
 
 @app.route("/calories", methods=["GET"])
 def calories_endpoint():
-    weight  = request.args.get("weight", type=float)
+    weight = request.args.get("weight", type=float)
     program = request.args.get("program", "")
     if weight is None:
         return jsonify({"error": "weight query param required"}), 400
@@ -122,7 +122,8 @@ def bmi_endpoint():
     weight = request.args.get("weight", type=float)
     height = request.args.get("height", type=float)
     if weight is None or height is None:
-        return jsonify({"error": "weight and height query params required"}), 400
+        return jsonify(
+            {"error": "weight and height query params required"}), 400
     result = calculate_bmi(weight, height)
     if result is None:
         return jsonify({"error": "Invalid weight or height"}), 400
@@ -131,4 +132,3 @@ def bmi_endpoint():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)
-    
