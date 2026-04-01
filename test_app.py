@@ -205,3 +205,4 @@ class TestBMIEndpoint:
     def test_missing_weight(self, client):
         r = client.get("/bmi?height=175")
         assert r.status_code == 400
+        
