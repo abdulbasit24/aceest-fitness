@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.12-slim'
+            args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
 
     environment {
         IMAGE_NAME = "aceest-fitness"
@@ -19,10 +24,9 @@ pipeline {
             steps {
                 echo '── Installing Python dependencies ──'
                 sh '''
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install --upgrade pip
+                    python -m pip install --upgrade pip
                     pip install -r requirements.txt
+                    pip install flake8 pytest pytest-cov
                 '''
             }
         }
@@ -31,7 +35,6 @@ pipeline {
             steps {
                 echo '── Running flake8 linter ──'
                 sh '''
-                    . venv/bin/activate
                     flake8 app.py test_app.py --max-line-length=100
                 '''
             }
@@ -41,7 +44,6 @@ pipeline {
             steps {
                 echo '── Running Pytest suite ──'
                 sh '''
-                    . venv/bin/activate
                     pytest test_app.py -v --junitxml=results.xml --cov=app --cov-report=xml
                 '''
             }
@@ -71,8 +73,7 @@ pipeline {
 
         stage('Cleanup') {
             steps {
-                echo '── Removing venv ──'
-                sh 'rm -rf venv'
+                echo '── Cleanup complete ──'
             }
         }
     }
